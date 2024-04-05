@@ -2,6 +2,7 @@
 # Importing the required libraries
 import csv
 import sys
+import os
 
 
 # Open given csv file
@@ -41,19 +42,31 @@ def validate_file_arguments():
         )
         sys.exit(1)
     # Check if the input and output file path is valid
-    elif sys.argv[1] == sys.argv[2]:
+    elif input_file == output_file:
         print("Error: Input and output file paths cannot be the same.")
         sys.exit(1)
-    elif sys.argv[1].split(".")[-1] != "csv" or sys.argv[2].split(".")[-1] != "csv":
+    elif input_file.split(".")[-1] != "csv" or output_file.split(".")[-1] != "csv":
         print("Error: Please provide the path to the csv file.")
+        sys.exit(1)
+    elif not os.path.isfile(input_file):
+        print(f"Error: File '{input_file}' does not exist or is not a regular file.")
+        sys.exit(1)
+    elif not os.path.isfile(output_file):
+        print(f"Error: File '{output_file}' does not exist or is not a regular file.")
+        sys.exit(1)
+    elif os.path.getsize(input_file) == 0:
+        print(f"Error: File '{input_file}' is empty.")
         sys.exit(1)
 
 
 if __name__ == "__main__":
+    # Get the input and output file path
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
     # Validate the input arguments
     validate_file_arguments()
     # Open the input file
-    sample_data = open_csv_file(sys.argv[1])
+    sample_data = open_csv_file(input_file)
     # Write the output file
     write_csv_file(sys.argv[2], sample_data)
     print("Sample output file created successfully.")

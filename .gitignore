@@ -9,3 +9,5 @@
 .python-version
 
 __pycache__
+
+cloud_task_env/

@@ -3,7 +3,7 @@ import json
 import boto3
 import logging
 from typing import List
-from debtsimplifier import DebtSimplifier
+
 from io import BytesIO
 import csv
 
@@ -36,6 +36,7 @@ def process_message(debts_id) -> List[dict]:
         # Create a DebtSimplifier object and simplify the debts
         debtsimpifier = DebtSimplifier(splitted_data)
         simplified_debts = debtsimpifier.simplify_debts()
+
         logger.info(f"Debts simplified: {simplified_debts}")
         return simplified_debts
     except Exception as e:
@@ -59,10 +60,8 @@ def save_results_to_s3(results: List[dict], key: str) -> None:
         logger.error(f"Error saving results to S3: {e}")
 
 
-def process_messages() -> None:
-    """
-    Główna funkcja obsługująca przetwarzanie wiadomości z kolejki SQS.
-    """
+def main() -> None:
+    """Process messages from the SQS queue."""
     while True:
         # Download a message from the SQS queue
         response = sqs.receive_message(
@@ -78,7 +77,7 @@ def process_messages() -> None:
                     logger.info(f"Debts ID: {debts_id}")
                     results = process_message(debts_id)
                     # # Save the results to S3
-                    save_results_to_s3(results, results + "_results")
+                    save_results_to_s3(results, debts_id + "_results")
 
                     # Delete the message from the SQS queue
                     sqs.delete_message(
@@ -94,5 +93,7 @@ def process_messages() -> None:
                     )
 
 
+from debtsimplifier import DebtSimplifier
+
 if __name__ == "__main__":
-    process_messages()
+    main()

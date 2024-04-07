@@ -10,6 +10,7 @@ packages = [{ include = "src", from = "." }]
 python = "^3.12"
 boto3 = "^1.34.79"
 localstack = "^3.3.0"
+pytest = "^8.1.1"
 
 [build-system]
 requires = ["poetry-core"]

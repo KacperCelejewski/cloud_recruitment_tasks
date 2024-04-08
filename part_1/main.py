@@ -3,6 +3,9 @@
 import csv
 import sys
 import os
+import itertools
+
+from debt_simplifier import DebtSimplifier
 
 
 # Open given csv file
@@ -51,12 +54,22 @@ def validate_file_arguments():
     elif not os.path.isfile(input_file):
         print(f"Error: File '{input_file}' does not exist or is not a regular file.")
         sys.exit(1)
-    elif not os.path.isfile(output_file):
-        print(f"Error: File '{output_file}' does not exist or is not a regular file.")
-        sys.exit(1)
     elif os.path.getsize(input_file) == 0:
         print(f"Error: File '{input_file}' is empty.")
         sys.exit(1)
+
+
+def main():
+    print("Simplifying debts... ")
+    # Open the input file and read the debts
+    debts = open_csv_file(input_file)
+    # Create a DebtSimplifier object
+    debt_simplifier = DebtSimplifier(debts)
+    # Get the simplified debts
+    simplified_debts = debt_simplifier.simplify_debts()
+    # Write the simplified debts to the output file
+    write_csv_file(output_file, simplified_debts)
+    print("Simplified debts written to", output_file)
 
 
 if __name__ == "__main__":
@@ -65,8 +78,5 @@ if __name__ == "__main__":
     output_file = sys.argv[2]
     # Validate the input arguments
     validate_file_arguments()
-    # Open the input file
-    sample_data = open_csv_file(input_file)
-    # Write the output file
-    write_csv_file(sys.argv[2], sample_data)
-    print("Sample output file created successfully.")
+    # Run the main function
+    main()
